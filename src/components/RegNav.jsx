@@ -8,7 +8,7 @@ export default function RegNav() {
 
   const handleClick = (e) => {
     if (currentPath === "call") {
-      navigate("/get-started");
+      navigate("/signup");
     } else {
       navigate("/call");
     }

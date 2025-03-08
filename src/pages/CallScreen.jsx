@@ -9,14 +9,14 @@ export default function Text() {
           width={"80%"}
           height={"80%"}
           className="object-contain"
-          src="/src/assets/tapo-call-image.png"
+          src="/tapo-call-image.png"
           alt="call"
         />
       </div>
       <div className="w-full h-screen bg-[#33BEE7] flex md:items-center md:justify-center">
         <div className="flex flex-col gap-5 w-[70] mx-auto items-center justify-center">
           <div className="flex items-center gap-4 justify-center">
-            <img src="src/assets/callIcon.png" alt="message-icon" />
+            <img src="/callIcon.png" alt="message-icon" />
             <span className="font-rubik text-[31.6px] leading-[37.44px] font-light text-white">
               Message
             </span>

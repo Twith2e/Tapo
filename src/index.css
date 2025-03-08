@@ -1,5 +1,50 @@
 @import url("https://fonts.googleapis.com/css2?family=Cantarell:ital,wght@0,400;0,700;1,400;1,700&family=Happy+Monkey&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
 
+/* Webkit browsers (Chrome, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #33BEE7;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #228cac;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #33BEE7 #f1f1f1;
+}
+
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .input-custom {
+    @apply px-4 py-2 focus:ring-1 outline-none border border-double border-blue-500 focus:shadow-blue-300;
+  }
+
+  .label-custom {
+    @apply w-fit;
+  }
+
+  .wrapper-custom {
+    @apply flex flex-col gap-1 relative w-full;
+  }
+
+  .error-message {
+    @apply absolute -bottom-9 text-sm font-bold text-red-500 font-sans;
+  }
+}

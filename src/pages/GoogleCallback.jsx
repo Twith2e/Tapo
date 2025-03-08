@@ -20,7 +20,6 @@ const GoogleCallback = () => {
         `http://localhost:3000/auth/callback?code=${code}`
       );
       if (response.data.status) {
-        // Redirect to the dashboard after successful login
         navigate("/dashboard");
       } else {
         console.error("Login failed", response.data.message);
