@@ -8,7 +8,10 @@ export default {
         rubik: ["Rubik", "sans-serif"],
       },
       backgroundColor: {
-        "sky-blue": "#33BEE7",
+        sky: "#33BEE7",
+      },
+      colors: {
+        sky: "#33BEE7",
       },
       keyframes: {
         "caret-blink": {

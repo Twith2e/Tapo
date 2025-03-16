@@ -5,9 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileSchema } from "../schemas/Profile.schema";
 import { useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Onboard() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const {
     reset,
@@ -33,6 +34,8 @@ export default function Onboard() {
       );
       if (response.status === 200) {
         console.log(response);
+        localStorage.setItem("accessToken", response.data.accessToken);
+        navigate(`/dashboard/${response.data.email}`);
       }
     } catch (error) {
       console.log(error);
@@ -97,7 +100,7 @@ export default function Onboard() {
               )}
             </div>
             <button
-              className="bg-sky-blue py-2 px-3 rounded-md text-white font-sans disabled:bg-blue-200 w-full flex justify-center mt-3"
+              className="bg-sky py-2 px-3 rounded-md text-white font-sans disabled:bg-blue-200 w-full flex justify-center mt-3"
               disabled={isLoading}
             >
               {isLoading ? (

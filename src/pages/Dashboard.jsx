@@ -1,65 +1,106 @@
-import React from "react";
-import { Link } from "react-router-dom"; // Optional: use this if you're using react-router for navigation
+import SidebarButton from "../components/SidebarButton";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { buttonInfos } from "../data/ButtonInfos";
+import Chats from "../components/Chats";
+import { HiOutlineMenu } from "react-icons/hi";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import ChatUI from "../components/ChatUI";
 
-const GetStartedPage = () => {
-  const containerStyle = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "100vh",
-    backgroundColor: "#f9f9f9",
-    padding: "1rem",
-  };
+export default function Dashboard() {
+  const [expanded, setExpanded] = useState(false);
+  const [socket, setSocket] = useState(null);
 
-  const cardStyle = {
-    backgroundColor: "#fff",
-    borderRadius: "10px",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-    padding: "2rem",
-    maxWidth: "500px",
-    width: "100%",
-    textAlign: "center",
-  };
+  useEffect(() => {
+    const newSocket = io("http://localhost:3000/");
+    setSocket(newSocket);
 
-  const headingStyle = {
-    color: "#33BEE7",
-    marginBottom: "1rem",
-  };
+    newSocket.on("connect", () => {
+      console.log("Connected to server with id:", newSocket.id);
+    });
 
-  const paragraphStyle = {
-    color: "#555",
-    lineHeight: "1.6",
-    marginBottom: "2rem",
-  };
+    newSocket.on("welcome", (data) => {
+      console.log(data);
+      newSocket.emit("thankYou", [4, 5, 6]);
+    });
 
-  const buttonStyle = {
-    backgroundColor: "#33BEE7",
-    border: "none",
-    color: "#fff",
-    padding: "0.8rem 1.5rem",
-    fontSize: "1rem",
-    borderRadius: "5px",
-    textDecoration: "none",
-    cursor: "pointer",
-  };
-
+    return () => newSocket.disconnect();
+  }, []);
   return (
-    <div style={containerStyle}>
-      <div style={cardStyle}>
-        <h1 style={headingStyle}>Welcome to ChatNow!</h1>
-        <p style={paragraphStyle}>
-          Get started by adding your first contact to your list. Connect, chat,
-          and share moments with your friends and family using ChatNow.
-        </p>
-        {/* If using react-router */}
-        <Link to="/add-contact" style={buttonStyle}>
-          Add First Contact
-        </Link>
-        {/* Or, if not using react-router, you can use a regular anchor tag: */}
-        {/* <a href="/add-contact" style={buttonStyle}>Add First Contact</a> */}
-      </div>
+    <div className="flex h-screen">
+      <aside
+        className={`border-r py-3 border-sky bg-slate-200 transition-[width, position] duration-700 ease-in-out overflow-hidden flex flex-col justify-between ${
+          expanded
+            ? "w-60 absolute left-0 bg-slate-200 h-screen top-0 z-10"
+            : "w-14"
+        }`}
+      >
+        <div>
+          <button
+            aria-label="collapse-and-expand-button"
+            onClick={() => setExpanded(!expanded)}
+            title={expanded ? "Collapse" : "Expand"}
+            className="flex justify-center items-center mb-4 px-3"
+          >
+            <HiOutlineMenu size={25} color="black" />
+          </button>
+
+          {buttonInfos.slice(0, 3).map(({ id, icon, text }) => (
+            <SidebarButton
+              key={id}
+              icon={icon}
+              text={text}
+              expanded={expanded}
+              color="gray"
+            />
+          ))}
+
+          <div className="border-b-[#36454F] border-1 my-3 w-[90%] m-auto"></div>
+        </div>
+        <div>
+          {buttonInfos.slice(3).map(({ id, icon, text, src }, index) => (
+            <>
+              {index === 1 ? (
+                <>
+                  <SidebarButton
+                    key={id}
+                    icon={icon}
+                    text={text}
+                    expanded={expanded}
+                    id={id}
+                    src={src}
+                    color="gray"
+                  />
+                  <div className="border-b-[#36454F] border-1 my-3 w-[90%] m-auto"></div>
+                </>
+              ) : (
+                <SidebarButton
+                  key={id}
+                  id={id}
+                  src={src}
+                  icon={icon}
+                  text={text}
+                  expanded={expanded}
+                  color="gray"
+                />
+              )}
+            </>
+          ))}
+        </div>
+      </aside>
+      <PanelGroup
+        className="flex-grow"
+        autoSaveId="example"
+        direction="horizontal"
+      >
+        <Panel maxSize={60} minSize={25}>
+          <Chats />
+        </Panel>
+        <PanelResizeHandle className="border-[#36454F] border-3" />
+        <Panel defaultSize={30} minSize={20} className="bg-white">
+          <ChatUI />
+        </Panel>
+      </PanelGroup>
     </div>
   );
-};
-
-export default GetStartedPage;
+}
