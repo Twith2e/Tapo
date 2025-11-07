@@ -6,12 +6,20 @@ import { HiOutlineMenu } from "react-icons/hi";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import ChatUI from "../components/ChatUI";
+import { useUserContext } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const { user } = useUserContext();
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
+    if (!user) {
+      navigate("/");
+      return;
+    }
     const newSocket = io("http://localhost:3000/");
     setSocket(newSocket);
 

@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileSchema } from "../schemas/Profile.schema";
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import api from "../utils/api";
 
 export default function Onboard() {
   const navigate = useNavigate();
@@ -25,17 +25,14 @@ export default function Onboard() {
     setIsLoading(true);
     try {
       console.log(data.displayName);
-      const response = await axios.post(
-        "http://localhost:3000/users/register",
-        {
-          displayName: data.displayName,
-          email: id,
-        }
-      );
+      const response = await api.post("/users/register", {
+        displayName: data.displayName,
+        email: id,
+      });
       if (response.status === 200) {
         console.log(response);
-        localStorage.setItem("accessToken", response.data.accessToken);
-        navigate(`/dashboard/${response.data.email}`);
+        localStorage.setItem("tapo_accessToken", response.data.accessToken);
+        navigate(`/dashboard`);
       }
     } catch (error) {
       console.log(error);

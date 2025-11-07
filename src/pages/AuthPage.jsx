@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "../schemas/SignupSchema";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useState } from "react";
+import api from "../utils/api";
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -21,10 +21,7 @@ export default function AuthPage() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3000/users/send-otp",
-        data
-      );
+      const response = await api.post("/users/send-otp", data);
       if (response && response.status === 200) {
         console.log(response);
         navigate(`/otp/${response.data.hashedEmail}`);
@@ -32,7 +29,6 @@ export default function AuthPage() {
     } catch (error) {
       console.log(error);
     } finally {
-      reset();
       setIsLoading(false);
     }
   }
@@ -61,7 +57,6 @@ export default function AuthPage() {
                 {...register("email")}
                 className="input-custom"
                 type="email"
-                name="email"
                 id="email"
                 placeholder="Email"
               />

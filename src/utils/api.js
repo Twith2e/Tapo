@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "http://localhost:3001",
   withCredentials: true,
 });
 
@@ -15,10 +15,18 @@ const onTokenRefreshed = (newAccessToken) => {
 
 api.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    const accessToken = localStorage.getItem("tapo_accessToken");
+    const pathname = window.location.pathname;
+    console.log(pathname);
+
+    const publicPrefixes = ["/", "/signup", "/otp", "/complete-registration"];
+    const isPublicRoute = publicPrefixes.some(
+      (prefix) => pathname === prefix || pathname.startsWith(prefix + "/")
+    );
+    if (!isPublicRoute && (!accessToken || accessToken === "null")) {
+      return Promise.reject(new Error("No access token; request blocked."));
     }
+    config.headers["Authorization"] = `Bearer ${accessToken}`;
     return config;
   },
   (error) => Promise.reject(error)
@@ -36,17 +44,16 @@ api.interceptors.response.use(
 
         try {
           const { data } = await axios.post(
-            "http://localhost:5000/refresh",
+            "http://localhost:3001/users/refresh-token",
             {},
             { withCredentials: true }
           );
-          localStorage.setItem("accessToken", data.accessToken);
+          localStorage.setItem("tapo_accessToken", data.accessToken);
           onTokenRefreshed(data.accessToken);
           return api(originalRequest);
         } catch (refreshError) {
           console.error("Refresh token failed, logging out...");
-          localStorage.removeItem("accessToken");
-          window.location.href = "/login";
+          localStorage.removeItem("tapo_accessToken");
           return Promise.reject(refreshError);
         } finally {
           isRefreshing = false;
